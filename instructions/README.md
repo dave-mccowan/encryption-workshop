@@ -1,0 +1,12 @@
+## Hands-on Encryption Workshop Instructions
+- [Exercise 0: Setup](Exercise_00_Setup.md)
+- [Exercise 1: Passphrases](Exercise_01_Passphrases.md)
+- [Exercise 2: Symmetric Encryption Keys](Exercise_02_Symmetric_Enrcryption_Keys.md)
+- [Exercise 3: Encrypted Volumes](Exercise_03_Encrypted_Volumes.md)
+- [Exercise 4: Image Verification](Exercise_04_Image_Verification.md)
+- [Exercise 5: Secret Containers](Exercise_05_Secret_Containers.md)
+- [Exercise 6: Generating Symmetric Encryption Keys](Exercise_06_Generating_Symmetric_Encryption_Keys.md)
+- [Exercise 7: Generating RSA Keys](Exercise_07_Generating_RSA_Keys.md)
+- [Exercise 8: X509 Certificates](Exercise_08_X509_Certifcates.md)
+- [Exercise 9: Sample Flask Application](Exercise_09_Flask_Application.md)
+- [Exercise 10: HSM Integration](Exercise_10_HSM_Integration.md)
