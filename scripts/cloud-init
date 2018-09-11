@@ -1,0 +1,3 @@
+#!/bin/bash
+/root/launch_step_2.sh > /root/setup.log
+echo done > /root/done.txt
