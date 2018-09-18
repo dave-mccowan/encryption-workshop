@@ -53,4 +53,4 @@ To use the passphrase in a script you can use the -f and -c flags again:
     # echo $PASSPHRASE
 
 
-[Back](Exercise_00_Setup.md) [Up](../README.md) [Next](Exercise_01_Passphrases.md)
+[Back](Exercise_00_Setup.md) [Up](../README.md) [Next](Exercise_02_Symmetric_Enrcryption_Keys.md)
