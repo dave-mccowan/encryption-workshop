@@ -5,7 +5,7 @@ For the (work in progress) Swift encryption features, users configure Swift to r
 
 First, create a file containing a new random AES-256 encryption key:
 
-    # dd if=/dev/urandom of=aes_key bs=1 count=32
+    # openssl rand 32 > aes_key
 
 Store the file as a new secret:
 
