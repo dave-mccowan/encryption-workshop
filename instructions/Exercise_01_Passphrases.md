@@ -39,7 +39,7 @@ An easy way to store a passphrase in Barbican and save the secret_ref value in a
 
     # SECRET_REF=$(openstack secret store --secret-type passphrase \
           --name "another passphrase" --payload 'Be77erPa$$phrazE' \
-          -c secret_ref -f value)
+          -c "Secret href" -f value)
 
 Now you can retrieve the secret and secret metadata by using the stored secret_ref:
 
@@ -49,7 +49,8 @@ Now you can retrieve the secret and secret metadata by using the stored secret_r
 To use the passphrase in a script you can use the -f and -c flags again:
 
     # PASSPHRASE=$(openstack secret get --payload $SECRET_REF \
-          -c payload -f value)
+          -c Payload -f value)
     # echo $PASSPHRASE
 
 
+[Back](Exercise_00_Setup.md) [Up](../README.md) [Next](Exercise_01_Passphrases.md)

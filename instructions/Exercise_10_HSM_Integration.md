@@ -18,3 +18,6 @@ If you wish to re-configure the Barbican instance to talk to the local Dogtag in
 
     # /root/convert_to_local_dogtag.sh
     # systemctl restart httpd.service
+
+
+[Back](Exercise_09_Flask_Application.md) [Up](../README.md)

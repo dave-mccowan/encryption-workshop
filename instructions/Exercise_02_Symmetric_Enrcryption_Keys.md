@@ -13,7 +13,7 @@ Store the file as a new secret:
       --secret-type 'symmetric' \
       --name 'AES-256 Encryption Key' \
       --file aes_key \
-      -c secret_ref -f value)
+      -c "Secret href" -f value)
 
 You can retrieve the metadata:
 
@@ -21,8 +21,14 @@ You can retrieve the metadata:
 
 Or download the key to a file using the secret get command. (The key will be written to the file “retrieved_key”.
 
-    # openstack secret get --file retrieved_key $SECRET_REF
+    # openstack secret get \
+      --file retrieved_key \
+      --payload_content_type application/octet-stream \
+      $SECRET_REF
 
 You can verify the retrieved key is identical to the original using the diff command:
 
     # diff aes_key retrieved_key
+
+
+[Back](Exercise_01_Passphrases.md) [Up](../README.md) [Next](Exercise_02_Symmetric_Enrcryption_Keys.md)

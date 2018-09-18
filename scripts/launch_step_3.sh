@@ -127,7 +127,7 @@ chown barbican: /etc/barbican/kra_admin_cert.pem
 mkdir /etc/barbican/alias
 echo "password123" > pwfile
 certutil -N -d /etc/barbican/alias -f pwfile
-rm pwfile
+rm -f pwfile
 chown -R barbican: /etc/barbican/alias
 
 pki  -p 18080 -h localhost cert-show 0x7 --output transport.pem

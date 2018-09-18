@@ -25,4 +25,4 @@ Once the order’s status changes from PENDING to ACTIVE the order metadata will
     # openstack secret get --file ordered_key $SECRET_REF
 
 
-
+[Back](Exercise_05_Secret_Containers.md) [Up](../README.md) [Next](Exercise_07_Generating_RSA_Keys.md)

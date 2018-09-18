@@ -35,7 +35,7 @@ chmod +x *.sh
 
 # get cirros image
 mkdir -p cache/image
-wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img -O ~/cache/image/cirros-0.3.4-x86_64-disk.img
+wget http://download.cirros-cloud.net/0.3.4/cirros-0.4.0-x86_64-disk.img -O ~/cache/image/cirros-0.4.0-x86_64-disk.img
 
 # get the flask app
 wget https://vakwetu.fedorapeople.org/summit_demo_prep/flask.tar.gz

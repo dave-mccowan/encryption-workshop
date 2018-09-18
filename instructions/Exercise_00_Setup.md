@@ -15,3 +15,5 @@ After logging in to your assigned VM, become the root user and run some OpenStac
     # openstack user list
     # openstack image list
     # openstack network list
+
+[Up](../README.md) [Next](Exercise_01_Passphrases.md)
