@@ -1,4 +1,4 @@
-##Exercise 3 - Encrypted Volumes
+## Exercise 3 - Encrypted Volumes
 In this exercise you will:
 - Using the Cinder API, create two volumes: an encrypted one and an unencrypted volume
 - Using the Nova API, launch an instance and attach the two volumes
