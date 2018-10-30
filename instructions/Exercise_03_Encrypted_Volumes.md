@@ -38,19 +38,13 @@ View the details of the volume.  Look for the “encrypted” and “type” att
     # openstack volume show clear_volume
     # openstack volume show encrypted_volume
 
-Create a new server and configure it’s networking.
+View the VM that is already running.
 
-    # INTERNAL_NETID=`openstack network show internal -f value -c id`
+    # openstack server list
 
-    # openstack server create --flavor m1.tiny --image cirros \
-    --nic net-id=$INTERNAL_NETID my_vm
+Capture the IP Address of the server
 
-    # IP_ADDR=`openstack floating ip create public -f value \
-    -c floating_ip_address`
-
-    # openstack server add floating ip my_vm $IP_ADDR
-
-    # ping $IP_ADDR
+    # IP_ADDR=$(openstack server show my_vm -c addresses -f value|awk '{print $2}')
 
 Attach the volumes to the server.
 

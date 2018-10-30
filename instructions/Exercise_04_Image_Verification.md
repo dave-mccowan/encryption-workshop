@@ -2,27 +2,12 @@
 Image verification allows Glance to enforce that only images signed by a trusted administrator with access to the private key can be uploaded to Glance.
 
 In this exercise you will:
-- Configure Glance to connect with the Barbican key manager
 - Create a key to sign images and store it in Barbican
 - Create two “images”, one with a valid signature and one without
 - Using the Glance API, attempt to upload the two images, while providing the UUID for the signing key.
 - Verify that only the image with the valid signature was uploaded
 
-In the previous exercise, Cinder and Nova were pre-configured to access the Barbican key manager.  In this exercise you will change the Glance configuration file and restart Glance.
-
-First, append barbican and key manager configuration options to the end of the glance-api.conf file.  Then, restart Glance.
-
-    # cat >> /etc/glance/glance-api.conf << EOF
-    [barbican]
-    auth_endpoint=https://127.0.0.1:5000/v3
-    barbican_endpoint=https://127.0.0.1:9311
-    barbican_api_version=v1
-    [key_manager]
-    api_class=castellan.key_manager.barbican_key_manager.BarbicanKeyManager
-    EOF
-    # openstack-service restart openstack-glance-api
-
-The next set of steps would be done by a trusted administrator.  These steps will create two images.  You will sign one image, but not the other.
+The following set of steps would be done by a trusted administrator.  These steps will create two images.  You will sign one image, but not the other.
 
 First, create a key pair to be used for signing and store it in Barbican.  Enter each of these commands to a certificate.  On the fourth command (openssl x509 …) you will be prompted to enter information to be stored in the certificate.  You can take the default (hit return) for each one, or provide a different answer.  The specific answers will not affect this exercise.
 

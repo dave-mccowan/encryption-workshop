@@ -139,7 +139,17 @@ crudini --set /etc/barbican/barbican.conf dogtag_plugin dogtag_port 18443
 crudini --set /etc/barbican/barbican.conf dogtag_plugin pem_path /etc/barbican/kra_admin_cert.pem
 crudini --set /etc/barbican/barbican.conf dogtag_plugin nss_db_path /etc/barbican/alias
 crudini --set /etc/barbican/barbican.conf dogtag_plugin nss_password redhat123
+
+# Open all hosts for horizon
+sed -i "s/^ALLOWED_HOSTS = .*/ALLOWED_HOSTS = \[\'\*\'\]/" /etc/openstack-dashboard/local_settings
+
+# Restart httpd (barbican and horizon)
 systemctl restart httpd.service
+
+# Open firewall port for horizon
+firewall-cmd --zone=public --add-port=80/tcp --permanent
+firewall-cmd --zone=public --add-port=443/tcp --permanent
+firewall-cmd --reload
 
 # add hsm config for last part of lab
 wget https://vakwetu.fedorapeople.org/summit_demo_prep/hsm_config.tar.gz
@@ -171,16 +181,25 @@ openstack router create router1
 openstack router set router1 --external-gateway public
 openstack router add subnet router1 int-subnet
 
-# Open all hosts for horizon
-sed -i "s/^ALLOWED_HOSTS = .*/ALLOWED_HOSTS = \[\'\*\'\]/" /etc/openstack-dashboard/local_settings
+# Launch a VM and attach a floating IP Address
+INTERNAL_NETID=`openstack network show internal -f value -c id`
+openstack server create --flavor m1.tiny --image cirros --nic net-id=$INTERNAL_NETID my_vm
+IP_ADDR=`openstack floating ip create public -f value -c floating_ip_address`
+sleep 5
+openstack server add floating ip my_vm $IP_ADDR
 
-# Open firewall port for horizon
-firewall-cmd --zone=public --add-port=80/tcp --permanent
-firewall-cmd --zone=public --add-port=443/tcp --permanent
-firewall-cmd --reload
+# Reconfigure Glance to use Barbican and restart
+cat >> /etc/glance/glance-api.conf << EOF
+[barbican]
+auth_endpoint=https://127.0.0.1:5000/v3
+barbican_endpoint=https://127.0.0.1:9311
+barbican_api_version=v1
+[key_manager]
+api_class=castellan.key_manager.barbican_key_manager.BarbicanKeyManager
+EOF
 
-# Restart httpd (barbican and horizon)
-systemctl restart httpd.service
+openstack-service restart openstack-glance-api
+
 
 #########################
 # allow password login
