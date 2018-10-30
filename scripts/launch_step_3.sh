@@ -151,19 +151,11 @@ firewall-cmd --zone=public --add-port=80/tcp --permanent
 firewall-cmd --zone=public --add-port=443/tcp --permanent
 firewall-cmd --reload
 
-# add hsm config for last part of lab
-wget https://vakwetu.fedorapeople.org/summit_demo_prep/hsm_config.tar.gz
-tar -xzf /root/hsm_config.tar.gz -C /
-chown -R barbican: /etc/barbican/alias_hsm
-chown -R barbican: /etc/barbican/kra_admin_cert_hsm.pem
-rm -f convert_to_dogtag_with_hsm.sh
-rm -f convert_to_local_dogtag.sh
-rm -f hsm-ca-cert.pem
-wget https://vakwetu.fedorapeople.org/summit_demo_prep/convert_to_dogtag_with_hsm.sh
-wget https://vakwetu.fedorapeople.org/summit_demo_prep/convert_to_local_dogtag.sh
-chmod +x *.sh
-wget https://vakwetu.fedorapeople.org/summit_demo_prep/hsm-ca-cert.pem
-cat hsm-ca-cert.pem >> /etc/ssl/certs/ca-bundle.trust.crt
+# add thales hsm scripts for last part of lab
+wget -O /root/thales_setup.sh https://raw.githubusercontent.com/dave-mccowan/encryption-workshop/master/scripts/thales_setup.sh
+wget -O /root/thales_unsetup.sh https://raw.githubusercontent.com/dave-mccowan/encryption-workshop/master/scripts/thales_unsetup.sh
+chmod +x thales_setup.sh
+chmod +x thales_unsetup.sh
 
 # Add security group rules
 source ~/openrc
