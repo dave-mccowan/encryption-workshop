@@ -14,7 +14,7 @@ Store the PKCS#8 formatted private key.
           --secret-type private \
           --name 'Private Key for Certificate' \
           --file private.pk8 \
-          -c secret_ref -f value)
+          -c "Secret href" -f value)
 
 Next, use openssl to generate the self-signed certificate:
 
@@ -26,7 +26,7 @@ Upload the certificate:
           --secret-type certificate \
           --name 'myhost.com certificate' \
           --file cert.pem \
-          -c secret_ref -f value)
+          -c "Secret href" -f value)
 
 Now create a certificate type container using the private key and certificate references:
 
@@ -35,7 +35,7 @@ Now create a certificate type container using the private key and certificate re
           --name 'Self-signed Certificate Bundle' \
           --secret "certificate=$CERT_REF" \
           --secret "private_key=$PRIVATE_REF" \
-          -c container_ref -f value)
+          -c "Container href" -f value)
 
 To retrieve the certificate container use this command:
 

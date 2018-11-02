@@ -8,23 +8,23 @@ First create two secret passphrases and store the references in environment vari
     # DB_PASSWORD_REF=$(openstack secret store \
           --secret-type passphrase \
           --name "Prod DB Password" \
-          --payload 'D4taba$ePassw0rd' -c secret_ref -f value)
+          --payload 'D4taba$ePassw0rd' -c "Secret href" -f value)
 
     # RABBIT_PASSWORD_REF=$(openstack secret store \
           --secret-type passphrase \
           --name "Prod RabbitMQ Password" \
-          --payload 'Rabb1tMQPa$$worD' -c secret_ref -f value)
+          --payload 'Rabb1tMQPa$$worD' -c "Secret href" -f value)
 
-Next create the container and store the container_ref:
+Next create the container and store the "Container href":
 
     # CONTAINER_REF=$(openstack secret container create \
           --type generic \
           --name "Production Credentials" \
           --secret "db=$DB_PASSWORD_REF" \
           --secret "rabbit=$RABBIT_PASSWORD_REF" \
-          -c container_ref -f value)
+          -c "Container href" -f value)
 
-At this point you only need to store the container_ref.  Since the container has the references to the secrets, you can query the secret container to retrieve the individual secret_refs.
+At this point you only need to store the "Container href".  Since the container has the references to the secrets, you can query the secret container to retrieve the individual "Secret href".
 
 To retrieve the container use this command:
 
