@@ -10,20 +10,20 @@ Store a passphrase:
 
 The secret will be saved and metadata about the stored secret will be returned
 
-+---------------+------------------------------------------------------+
-| Field         | Value                                                |
-+---------------+------------------------------------------------------+
-| Secret href   | https://127.0.0.1:9311/v1/secrets/4866a7f2-ab6a-4..  |
-| Name          | my passphrase                                        |
-| Created       | None                                                 |
-| Status        | None                                                 |
-| Content types | None                                                 |
-| Algorithm     | aes                                                  |
-| Bit length    | 256                                                  |
-| Secret type   | passphrase                                           |
-| Mode          | cbc                                                  |
-| Expiration    | None                                                 |
-+---------------+------------------------------------------------------+
+    +---------------+------------------------------------------------------+
+    | Field         | Value                                                |
+    +---------------+------------------------------------------------------+
+    | Secret href   | https://127.0.0.1:9311/v1/secrets/4866a7f2-ab6a-4..  |
+    | Name          | my passphrase                                        |
+    | Created       | None                                                 |
+    | Status        | None                                                 |
+    | Content types | None                                                 |
+    | Algorithm     | aes                                                  |
+    | Bit length    | 256                                                  |
+    | Secret type   | passphrase                                           |
+    | Mode          | cbc                                                  |
+    | Expiration    | None                                                 |
+    +---------------+------------------------------------------------------+
 
 The "Secret href" can be used to retrieve the secret metadata.  Copy and paste the value from your output.
 
