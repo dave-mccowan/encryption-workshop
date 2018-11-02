@@ -16,7 +16,7 @@ Create a random string:
 
 Store the random string in Barbican:
 
-    # openstack secret store --payload $SECRET
+    # openstack secret store --secret-type passphrase --payload $SECRET
 
 Save the secret UUID as an environment variable.  The UUID is the last part of the secret ref that was printed after creating the secret.  It should be in the format of 00000000-0000-0000-0000-000000000000:
 

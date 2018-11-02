@@ -9,29 +9,29 @@ Submit an order for a 4096-bit RSA key pair.
 
     # ORDER_REF=$(openstack secret order create asymmetric \
           --algorithm rsa --bit-length 4096 \
-          -c order_ref -f value)
+          -c "Order href" -f value)
 
-Once the order’s status changes to ACTIVE the order metadata will include a container_ref for the newly created RSA Secret Container
+Once the order’s status changes to ACTIVE the order metadata will include a "Container href" for the newly created RSA Secret Container
 
     # RSA_CONTAINER_REF=$(openstack secret order get $ORDER_REF \
-           -c container_ref -f value)
+           -c "Container href" -f value)
 
 Retrieve the public key and save it to a file:
 
     # PUBLIC_KEY_REF=$(openstack secret container get \
-          $RSA_CONTAINER_REF -c public_key -f value)
-    # openstack secret get --file rsa.pub $PUBLIC_KEY_REF
-    # cat rsa.pub
+          $RSA_CONTAINER_REF -c "Public Key" -f value)
+    # openstack secret get --file generated_rsa.pub $PUBLIC_KEY_REF
+    # cat generated_rsa.pub
 
 Retrieve the private key and save it to a file:
 
     # PRIVATE_KEY_REF=$(openstack secret container get \
-          $RSA_CONTAINER_REF -c private_key -f value)
-    # openstack secret get --file rsa $PRIVATE_KEY_REF
+          $RSA_CONTAINER_REF -c "Private Key" -f value)
+    # openstack secret get --file generated_rsa $PRIVATE_KEY_REF
 
 Verify the contents of the file.
 
-    # cat rsa
+    # cat generated_rsa
 
 
 [Back](Exercise_06_Generating_Symmetric_Encryption_Keys.md) [Up](../README.md) [Next](Exercise_08_X509_Certifcates.md)

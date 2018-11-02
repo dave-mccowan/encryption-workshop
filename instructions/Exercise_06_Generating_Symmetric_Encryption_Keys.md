@@ -12,17 +12,17 @@ Submit an order for the AES Key:
     # ORDER_REF=$(openstack secret order create key \
           --name "Order for an AES key" \
           --algorithm aes --bit-length 256 \
-          -c order_ref -f value)
+          -c "Order href" -f value)
 
 Orders may take some time to be fulfilled by the Barbican service.  You can check the status of your order by retrieving the order metadata:
 
     # openstack secret order get $ORDER_REF
 
-Once the order’s status changes from PENDING to ACTIVE the order metadata will include a secret_ref for the newly created secret.  You can retrieve the key just as in Example 2:
+Once the order’s status changes from PENDING to ACTIVE the order metadata will include a "Secret href" for the newly created secret.  You can retrieve the key just as in Example 2:
 
     # SECRET_REF=$(openstack secret order get $ORDER_REF \
-           -c secret_ref -f value)
-    # openstack secret get --file ordered_key $SECRET_REF
+           -c "Secret href" -f value)
+    # openstack secret get --file ordered_key --payload_content_type 'application/octet-stream' $SECRET_REF
 
 
 [Back](Exercise_05_Secret_Containers.md) [Up](../README.md) [Next](Exercise_07_Generating_RSA_Keys.md)
