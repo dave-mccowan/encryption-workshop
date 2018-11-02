@@ -53,7 +53,7 @@ Attach the volumes to the server.
 
 Login to the server, format and mount the volumes, then write some data.  You’ll write “public” data to the unencrypted volume and “private” information to the encrypted volume.
 
-    # ssh cirros@$IP_ADDR    # password is “cubswin:)”
+    # ssh cirros@$IP_ADDR    # password is “gocubsgo”
     $ sudo su -
     # mkfs.ext4 /dev/vdb
     # mkfs.ext4 /dev/vdc

@@ -19,7 +19,7 @@ First, create a key pair to be used for signing and store it in Barbican.  Enter
       --algorithm RSA --secret-type certificate \
       --payload-content-type "application/octet-stream" \
       --payload-content-encoding base64 \
-      --payload "$(base64 new_cert.crt)" -c secret_ref -f value)
+      --payload "$(base64 new_cert.crt)" -c "Secret href" -f value)
     # CERT_UUID=$(echo $CERT_REF | awk -F '/' '{print $NF}')
     # openstack secret list
 
