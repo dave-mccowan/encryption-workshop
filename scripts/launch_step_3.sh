@@ -152,10 +152,17 @@ firewall-cmd --zone=public --add-port=443/tcp --permanent
 firewall-cmd --reload
 
 # add thales hsm scripts for last part of lab
-wget -O /root/thales_setup.sh https://raw.githubusercontent.com/dave-mccowan/encryption-workshop/master/scripts/thales_setup.sh
-wget -O /root/thales_unsetup.sh https://raw.githubusercontent.com/dave-mccowan/encryption-workshop/master/scripts/thales_unsetup.sh
-chmod +x thales_setup.sh
-chmod +x thales_unsetup.sh
+# wget -O /root/thales_setup.sh https://raw.githubusercontent.com/dave-mccowan/encryption-workshop/master/scripts/thales_setup.sh
+# wget -O /root/thales_unsetup.sh https://raw.githubusercontent.com/dave-mccowan/encryption-workshop/master/scripts/thales_unsetup.sh
+# chmod +x thales_setup.sh
+# chmod +x thales_unsetup.sh
+
+# get and set up creds to access hsm through shared dogtag
+wget -O /root/hsm_config.tar.gz https://vakwetu.fedorapeople.org/berlin_summit/hsm_config.tar.gz
+tar -xzf /root/hsm_config.tar.gz -C /
+chown -R barbican: /etc/barbican/alias_hsm
+chown -R barbican: /etc/barbican/kra_admin_cert_hsm.pem
+cat /etc/barbican/ca_cert_hsm.pem >> /etc/ssl/certs/ca-bundle.trust.crt
 
 # Add security group rules
 source ~/openrc
