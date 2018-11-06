@@ -42,4 +42,4 @@ At the end of the exercise, deactivate the virtual environment:
     # deactivate
 
 
-[Back](Exercise_08_X509_Certifcates.md) [Up](../README.md) [Next](Exercise_10_HSM_Integration.md)
+[Back](Exercise_08_Generating_RSA_Keys.md) [Up](../README.md) [Next](Exercise_10_HSM_Integration.md)

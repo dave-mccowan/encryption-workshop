@@ -1,4 +1,4 @@
-## Exercise 5 - Secret Containers
+## Exercise 7 - Secret Containers
 Create a couple of Secrets and add them to a Secret Container.
 
 Containers are a useful way to group a few Secrets together.  In this example, you will store two passphrases for production-ready external services in Barbican.  You can group them in a container so that you can easily retrieve all your production-related passphrases in one command.
@@ -33,4 +33,4 @@ To retrieve the container use this command:
 Once you retrieve the container you can retrieve the individual secrets as in Exercise 1.
 
 
-[Back](Exercise_04_Image_Verification.md) [Up](../README.md) [Next](Exercise_06_Generating_Symmetric_Encryption_Keys.md)
+[Back](Exercise_06_Image_Verification.md) [Up](../README.md) [Next](Exercise_08_Generating_RSA_Keys.md)

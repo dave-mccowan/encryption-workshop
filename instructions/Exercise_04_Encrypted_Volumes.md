@@ -1,4 +1,4 @@
-## Exercise 3 - Encrypted Volumes
+## Exercise 4 - Encrypted Volumes
 In this exercise you will:
 - Using the Cinder API, create two volumes: an encrypted one and an unencrypted volume
 - Using the Nova API, launch an instance and attach the two volumes
@@ -76,4 +76,4 @@ In this deployment, the volumes that you created are stored in a logical file lo
     # head -c 300M /var/lib/cinder/cinder-volumes | fold | grep private
 
 
-[Back](Exercise_02_Symmetric_Enrcryption_Keys.md) [Up](../README.md) [Next](Exercise_04_Image_Verification.md)
+[Back](Exercise_03_Generating_Symmetric_Encryption_Keys.md) [Up](../README.md) [Next](Exercise_05_X509_Certifcates.md)

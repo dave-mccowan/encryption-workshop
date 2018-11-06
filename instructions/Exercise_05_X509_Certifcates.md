@@ -1,4 +1,4 @@
-## Exercise 8 - x.509 Certificates
+## Exercise 5 - x.509 Certificates
 Create a self-signed x.509 certificate and upload all parts.
 
 LBaaS relies on Barbican to store the both the public and the private data necessary to decrypt TLS connections on the Load Balancer. The user uploads their private key, certificate, and any necessary intermediates into a Barbican certificate container. LBaaS understands the certificate container format, and only needs the container's ID when creating a TLS Terminating Load Balancer.
@@ -44,4 +44,4 @@ To retrieve the certificate container use this command:
 Once you retrieve the container you can retrieve the individual secrets as in Exercise 1.
 
 
-[Back](Exercise_07_Generating_RSA_Keys.md) [Up](../README.md) [Next](Exercise_09_Flask_Application.md)
+[Back](Exercise_04_Encrypted_Volumes.md) [Up](../README.md) [Next](Exercise_06_Image_Verification.md)

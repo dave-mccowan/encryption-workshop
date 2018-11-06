@@ -1,4 +1,4 @@
-## Exercise 4 - Image Verification Using Glance
+## Exercise 6 - Image Verification Using Glance
 Image verification allows Glance to enforce that only images signed by a trusted administrator with access to the private key can be uploaded to Glance.
 
 In this exercise you will:
@@ -60,4 +60,4 @@ Verify that only the signed image was uploaded.
     # openstack image list
 
 
-[Back](Exercise_03_Encrypted_Volumes.md) [Up](../README.md) [Next](Exercise_05_Secret_Containers.md)
+[Back](Exercise_05_X509_Certifcates.md) [Up](../README.md) [Next](Exercise_07_Secret_Containers.md)

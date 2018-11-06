@@ -1,4 +1,4 @@
-## Exercise 6 - Generating Symmetric Encryption Keys
+## Exercise 3 - Generating Symmetric Encryption Keys
 Request and retrieve an AES-256 encryption key using an Order.
 
 Volume encryption is one feature in OpenStack that uses symmetric encryption keys.  Cinder will request that Barbican creates a key when the volume is created and will associate the key ID with the volume metadata.  Then, Nova will retrieve the key and use it when attaching the volume to an instance.
@@ -25,4 +25,4 @@ Once the order’s status changes from PENDING to ACTIVE the order metadata will
     # openstack secret get --file ordered_key --payload_content_type 'application/octet-stream' $SECRET_REF
 
 
-[Back](Exercise_05_Secret_Containers.md) [Up](../README.md) [Next](Exercise_07_Generating_RSA_Keys.md)
+[Back](Exercise_02_Symmetric_Enrcryption_Keys.md) [Up](../README.md) [Next](Exercise_04_Encrypted_Volumes.md)

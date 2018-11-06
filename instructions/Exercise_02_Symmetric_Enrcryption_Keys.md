@@ -31,4 +31,4 @@ You can verify the retrieved key is identical to the original using the diff com
     # diff aes_key retrieved_key
 
 
-[Back](Exercise_01_Passphrases.md) [Up](../README.md) [Next](Exercise_03_Encrypted_Volumes.md)
+[Back](Exercise_01_Passphrases.md) [Up](../README.md) [Next](Exercise_03_Generating_Symmetric_Encryption_Keys.md)

@@ -1,4 +1,4 @@
-## Exercise 7 - Generating RSA Keys
+## Exercise 8 - Generating RSA Keys
 Request and retrieve an RSA private key using an order.
 
 For the Glance image signing and verification feature, the first step is to create an RSA key pair.  Then, the user should request a CA to create a certificate tied to the key pair.  Before the user uploads the image, they sign the image using the private key.  The user uploads the certificate to Barbican and adds the certificate UUID and the image signature to the image metadata.  When the image is uploaded, Glance will retrieve the certificate and use it to verify the signature of the image.  Nova can also be configured to verify the signature again before booting the image.
@@ -34,4 +34,4 @@ Verify the contents of the file.
     # cat generated_rsa
 
 
-[Back](Exercise_06_Generating_Symmetric_Encryption_Keys.md) [Up](../README.md) [Next](Exercise_08_X509_Certifcates.md)
+[Back](Exercise_07_Secret_Containers.md) [Up](../README.md) [Next](Exercise_09_Flask_Application.md)
