@@ -5,7 +5,7 @@ Sahara is the OpenStack project for provisioning a data-intensive application cl
 
 Store a passphrase, the secret will be saved and metadata about the stored secret will be returned:
 
-    $ openstack secret store --secret-type passphrase \
+    # openstack secret store --secret-type passphrase \
           --name 'my passphrase' --payload 'Pa$$phrasE'
     +---------------+------------------------------------------------------+
     | Field         | Value                                                |
@@ -24,12 +24,12 @@ Store a passphrase, the secret will be saved and metadata about the stored secre
 
 The "Secret href" can be used to retrieve the secret metadata.  Copy and paste the value from your output.
 
-    $ openstack secret get https://127.0.0.1:9311/v1/secrets/4866a7f2-ab6a-4..
+    # openstack secret get https://127.0.0.1:9311/v1/secrets/4866a7f2-ab6a-4..
     
 
 Note that this only shows metadata.  To retrieve the actual secret value you use the --payload parameter.
 
-    $ openstack secret get --payload https://127.0.0.1:9311/v1/secrets/4866a7f2-ab6a-4..
+    # openstack secret get --payload https://127.0.0.1:9311/v1/secrets/4866a7f2-ab6a-4..
     +---------+------------+
     | Field   | Value      |
     +---------+------------+
@@ -38,13 +38,13 @@ Note that this only shows metadata.  To retrieve the actual secret value you use
 
 An easy way to store a passphrase in Barbican and save the "Secret href" value in an environment variable is by using the -f (--format) and -c (--column) flags.  Store a second secret using the command like this:
 
-    $ SECRET_REF=$(openstack secret store --secret-type passphrase \
+    # SECRET_REF=$(openstack secret store --secret-type passphrase \
           --name "another passphrase" --payload 'Be77erPa$$phrazE' \
           -c "Secret href" -f value)
 
 Now you can retrieve the secret and secret metadata by using the stored "Secret href":
 
-    $ openstack secret get $SECRET_REF
+    # openstack secret get $SECRET_REF
     +---------------+------------------------------------------------------------------------+
     | Field         | Value                                                                  |
     +---------------+------------------------------------------------------------------------+
@@ -60,7 +60,7 @@ Now you can retrieve the secret and secret metadata by using the stored "Secret 
     | Expiration    | None                                                                   |
     +---------------+------------------------------------------------------------------------+
     
-    $ openstack secret get --payload $SECRET_REF
+    # openstack secret get --payload $SECRET_REF
     +---------+------------------+
     | Field   | Value            |
     +---------+------------------+
@@ -69,8 +69,8 @@ Now you can retrieve the secret and secret metadata by using the stored "Secret 
 
 To use the passphrase in a script you can use the -f flag again:
 
-    $ PASSPHRASE=$(openstack secret get --payload $SECRET_REF -f value)
-    $ echo $PASSPHRASE
+    # PASSPHRASE=$(openstack secret get --payload $SECRET_REF -f value)
+    # echo $PASSPHRASE
     Be77erPa$$phrazE
 
 [Back](Exercise_00_Setup.md) [Up](../README.md) [Next](Exercise_02_Symmetric_Enrcryption_Keys.md)
