@@ -5,23 +5,23 @@ For the (work in progress) Swift encryption features, users configure Swift to r
 
 First, create a file containing a new random AES-256 encryption key:
 
-    $ openssl rand 32 > aes_key
-    $ hexdump -C aes_key 
+    # openssl rand 32 > aes_key
+    # hexdump -C aes_key 
     00000000  a2 0d 98 e5 f5 8d ac fb  3a d6 f8 71 d0 f6 ef 22  |........:..q..."|
     00000010  74 11 e5 d9 90 94 76 9e  72 30 b6 48 ca af 19 e1  |t.....v.r0.H....|
     00000020
 
 Store the file as a new secret:
 
-    $ SECRET_REF=$(openstack secret store \
-      --secret-type 'symmetric' \
-      --name 'AES-256 Encryption Key' \
-      --file aes_key \
-      -c "Secret href" -f value)
+    # SECRET_REF=$(openstack secret store \
+          --secret-type 'symmetric' \
+          --name 'AES-256 Encryption Key' \
+          --file aes_key \
+          -c "Secret href" -f value)
 
 You can retrieve the metadata:
 
-    $ openstack secret get $SECRET_REF
+    # openstack secret get $SECRET_REF
     +---------------+------------------------------------------------------------------------+
     | Field         | Value                                                                  |
     +---------------+------------------------------------------------------------------------+
@@ -39,18 +39,18 @@ You can retrieve the metadata:
 
 Or download the key to a file using the secret get command. (The key will be written to the file “retrieved_key”.
 
-    $ openstack secret get \
-      --file retrieved_key \
-      --payload_content_type application/octet-stream \
-      $SECRET_REF
-    $ hexdump -C retrieved_key 
+    # openstack secret get \
+          --file retrieved_key \
+          --payload_content_type application/octet-stream \
+          $SECRET_REF
+    # hexdump -C retrieved_key
     00000000  a2 0d 98 e5 f5 8d ac fb  3a d6 f8 71 d0 f6 ef 22  |........:..q..."|
     00000010  74 11 e5 d9 90 94 76 9e  72 30 b6 48 ca af 19 e1  |t.....v.r0.H....|
     00000020
 
 You can verify the retrieved key is identical to the original using the diff command:
 
-    $ diff aes_key retrieved_key
+    # diff aes_key retrieved_key
 
 
 [Back](Exercise_01_Passphrases.md) [Up](../README.md) [Next](Exercise_03_Generating_Symmetric_Encryption_Keys.md)
