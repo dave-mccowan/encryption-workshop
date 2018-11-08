@@ -12,10 +12,10 @@ Both Nova and Cinder use Castellan to access Barbican.
 Create a new volume type in Cinder and configure it to use LUKS encryption.
 
     # openstack volume type create \
-        --encryption-provider nova.volume.encryptors.luks.LuksEncryptor \
-        --encryption-cipher aes-xts-plain64 \
-        --encryption-key-size 256 \
-        --encryption-control-location front-end LUKS
+          --encryption-provider nova.volume.encryptors.luks.LuksEncryptor \
+          --encryption-cipher aes-xts-plain64 \
+          --encryption-key-size 256 \
+          --encryption-control-location front-end LUKS
     +-------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
     | Field       | Value                                                                                                                                                                              |
     +-------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
