@@ -10,11 +10,11 @@ In addition, a Dogtag instance is deployed, which Barbican is configured to use 
 After logging in to your assigned VM, become the root user and run some OpenStack CLI commands to verify that it is working.
 
     $ sudo su -
-    $ source openrc
+    # source openrc
 
 ### catalog
 
-    $ openstack catalog list
+    # openstack catalog list
     +-----------+--------------+----------------------------------------------------------------------------+
     | Name      | Type         | Endpoints                                                                  |
     +-----------+--------------+----------------------------------------------------------------------------+
@@ -99,7 +99,7 @@ After logging in to your assigned VM, become the root user and run some OpenStac
 
 ### users
 
-    $ openstack user list
+    # openstack user list
     +----------------------------------+-----------+
     | ID                               | Name      |
     +----------------------------------+-----------+
@@ -115,7 +115,7 @@ After logging in to your assigned VM, become the root user and run some OpenStac
 
 ### images
 
-    $ openstack image list
+    # openstack image list
     +--------------------------------------+------------+--------+
     | ID                                   | Name       | Status |
     +--------------------------------------+------------+--------+
@@ -125,7 +125,7 @@ After logging in to your assigned VM, become the root user and run some OpenStac
 
 ### network
 
-    $ openstack network list
+    # openstack network list
     +--------------------------------------+----------+--------------------------------------+
     | ID                                   | Name     | Subnets                              |
     +--------------------------------------+----------+--------------------------------------+
