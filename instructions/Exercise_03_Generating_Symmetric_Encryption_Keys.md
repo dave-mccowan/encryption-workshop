@@ -9,14 +9,14 @@ This exercise has you manually follow the steps of what Cinder and Nova are doin
 
 Submit an order for the AES Key:
 
-    $ ORDER_REF=$(openstack secret order create key \
+    # ORDER_REF=$(openstack secret order create key \
           --name "Order for an AES key" \
           --algorithm aes --bit-length 256 \
           -c "Order href" -f value)
 
 Orders may take some time to be fulfilled by the Barbican service.  You can check the status of your order by retrieving the order metadata:
 
-    $ openstack secret order get $ORDER_REF
+    # openstack secret order get $ORDER_REF
     +----------------+------------------------------------------------------------------------+
     | Field          | Value                                                                  |
     +----------------+------------------------------------------------------------------------+
@@ -32,11 +32,11 @@ Orders may take some time to be fulfilled by the Barbican service.  You can chec
 
 Once the order’s status changes from PENDING to ACTIVE the order metadata will include a "Secret href" for the newly created secret.  You can retrieve the key just as in Example 2:
 
-    $ SECRET_REF=$(openstack secret order get $ORDER_REF \
+    # SECRET_REF=$(openstack secret order get $ORDER_REF \
           -c "Secret href" -f value)
-    $ openstack secret get --file ordered_key \
+    # openstack secret get --file ordered_key \
           --payload_content_type 'application/octet-stream' $SECRET_REF
-    $ hexdump -C ordered_key 
+    # hexdump -C ordered_key 
     00000000  0f f0 10 26 b6 89 1d d2  97 05 2e 43 83 29 b1 ad  |...&.......C.)..|
     00000010  cb 4a a9 c7 14 0c 09 c9  50 ce 3e 1f 83 15 7c 90  |.J......P.>...|.|
     00000020
