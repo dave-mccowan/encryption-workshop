@@ -203,9 +203,9 @@ openstack-service restart openstack-glance-api
 #########################
 # allow password login
 #########################
-usermod -p '$1$6EE.AFpC$9c9o2IkQRCVy84uq4qAjm0' centos
-sed -i 's|[#]*PasswordAuthentication no|PasswordAuthentication yes|g' /etc/ssh/sshd_config
-systemctl restart  sshd.service
+#usermod -p '$1$6EE.AFpC$9c9o2IkQRCVy84uq4qAjm0' centos
+#sed -i 's|[#]*PasswordAuthentication no|PasswordAuthentication yes|g' /etc/ssh/sshd_config
+#systemctl restart  sshd.service
 
 # tag as done
 touch /root/go.done.txt
