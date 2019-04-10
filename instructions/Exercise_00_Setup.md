@@ -1,7 +1,41 @@
 ## Setup - Let's Get Started!
-Login to your VM using the username and password provided by the instructors.
+Copy this ssh key file and save it in a file called `barbican_workshop.pem`:
 
-    $ ssh centos@<YOUR_VM_IP>
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIEowIBAAKCAQEAuTkydXL6Z3VG6nW7EGBSkkFnBusE70OlkzlsGqBk9z7sof0+
+    jrkhfUVN4I+HIneW8ieC3It9jV1q+8AjawLbzvG/F1MXdgjbAn9BaxxPvXOfqWTM
+    q9SXefcQL1Ic0IBcr6ALjX6RL/WmPfH0vo2/QF5pTnFwZjzZQN7ze1udM1w6zbji
+    s+Sg2RadePoAE54Bz42qgMcGX7EyJpxoKkTE7H552hA60OrAHod+whI7PmysLEVr
+    PoKMrzrB1T+CiUNl1mdFSJZPB9h6bdMq3AKsYub29vinTX3aNwAyHPx2ljmXKSOs
+    nhY2vsU9xRviqYW9+FBKESJ85Lb/krEOOc336QIDAQABAoIBAHAQ7zqoimC2UGXj
+    PX83CD59W7yPzbiGEVP2VjX1/aCqbbnE42ivElgc6nWH4Zc1DBsPVNnje99gOi5/
+    ne5NGHkpQxj1qSg9S2VDYW1Q/938awmudzcvtUaR+TToVY7BW1LXXqYJggamdiLc
+    ldwFH0Xu2YAgmoUBI+FgA6kLUR2VE7XMiF4bj9vBfZqvpNyHDU/b8xoph1F31FgK
+    lY/wQKF6oIgU+qKe5kkHCxIeFnw3X2ojxYM4WsDyycOa8vTj/6P1Qs43MkRl8KQK
+    O2zTk5CP9NNh8dDwZRAPbE3o0f56CPkszfKskCm1jWBwRXsZurd91H9echK6vGSA
+    wmWJlJECgYEA6nvlEAS0MUGvVj1Cb6TuWRsVb/VMHEsr+b5xI3EB9PkOyrjeDX/1
+    kYFosO9yr43J8u2UPlkQ2mqufgFJCN5PgJC2D3fAuDYq6kxI6HJR4Y+/uNnidwdY
+    57pUxnD6qWAIqKjgfg0qX0zPmGZc6UPUcWFAO+0w8yn3UbFX93XiwfMCgYEAyjgn
+    +Lucf92I12/mkWmgBfBmi6WB4KKCjHeRQ/v68EWxUUProd2WyXwbmeG/vsGdxIVA
+    F2QM6m2Sx/UXW/8Lax8ui5vURNqp46Kee80l2l7Q9BQbjWetIjVC4UTUiBVkw+vW
+    J+GA/JD9X5rUUZ5OLB7fA6XZM6yQ1sQA9Ne5+bMCgYASEJN4JXSgatgQQ83vffxi
+    3wRKyNIhR+VOa06aFWW6Msnh8lYhIh+QIzEmmHv0bG8HiSgnmYMD4L4qtPykc0Qa
+    uotcK7SsPHgX7uKbDdujDgkOO7MHyogd6iwH0cJt9BkWrVQGQgtmpitEKXa0/eXL
+    ClwBgeeIhE4qfAgz52Ad4wKBgFEo7qn+qlYLVMOajsBn0yjvDkkX2SOONbUou+28
+    MT/DyOHjz6t8Yutk2zMMjseBr89S56E7r49bAOEt9f0fRLbuoeC4Xx5vYGYTO2ZW
+    tM2K5nQ/qbs8FBm5pKkC1gX0CCg1/BKvh/RWQMrhOjuzvI4qqbkuFBmQNeVsbzHV
+    bzfPAoGBAJoDvrS450GgyUq9Xjqej0ebMPYRKw/hRaiwtOF5c+LOLT/MeskyedQU
+    Yrlmm28qihtKe+RvWykguZmxS3TdmZKXmxBOaDt8EdCQQqO5lfuJ8h9rIdH1BrFL
+    yFZMg/oxL8raSA5Bepq/R9cyrkkIYXwTygzXWSe3a3zJqewK3lv2
+    -----END RSA PRIVATE KEY-----
+
+Change the file permissions to read/write for your user only:
+
+    $ chmod 0600 barbican_workshop.pem
+
+Connect to your VM using this ssh key:
+
+    $ ssh -i barbican_workshop.pem centos@<YOUR_VM_IP>
 
 Your assigned VM already has an OpenStack deployment configured and running!   This includes the OpenStack services Keystone, Nova, Cinder, Glance, Neutron, Swift, Horizon, and Barbican.
 
