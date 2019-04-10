@@ -42,3 +42,6 @@ wget http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img -O ~/ca
 wget https://vakwetu.fedorapeople.org/summit_demo_prep/flask.tar.gz
 cd /root
 tar -xzf /root/flask.tar.gz
+
+# barbican gets an import error using ldap3 2.5.2, downgrade to 2.4.1
+yum downgrade -y python2-ldap3

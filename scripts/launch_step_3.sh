@@ -33,6 +33,7 @@ class { '::openstack_integration::glance':
 }
 include ::openstack_integration::swift
 
+include ::openstack_integration::placement
 class { '::openstack_integration::nova':
   volume_encryption => true,
 }
