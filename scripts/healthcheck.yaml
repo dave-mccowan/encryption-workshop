@@ -63,4 +63,76 @@
       command: openstack secret delete {{ secret_ref.stdout }}
 
     - name: clean up test order
-      command: openstack order delete {{ order_ref.stdout }}
+      command: openstack secret order delete {{ order_ref.stdout }}
+
+    # Exercise 04
+    - name: ensure my_vm is ACTIVE
+      os_server_facts:
+        server: my_vm
+    - fail:
+        msg: "my_vm is not ACTIVE"
+      when: "openstack_servers[0].status != 'ACTIVE'"
+
+# TODO: fix encrypted volume creation
+#    - name: create test volume type
+#      command: |
+#        openstack volume type create
+#        --encryption-provider nova.volume.encryptors.luks.LuksEncryptor
+#        --encryption-cipher aes-xts-plain64
+#        --encryption-key-size 256
+#        --encryption-control-location front-end TEST_LUKS
+#
+#    - name: create test clear volume
+#      command: openstack volume create --size 1 test_clear_volume
+#
+#    - name: create test encrypted volume
+#      command: openstack volume create --size 1 --type TEST_LUKS test_encrypted_volume
+#
+#    - name: clean up volumes
+#      command: openstack volume delete {{ item }}
+#      loop:
+#        - test_clear_volume
+#        - test_encrypted_volume
+#
+#    - name: clean up test volume type
+#      command: openstack volume type delete TEST_LUKS
+
+    # Exercise 05
+    - name: generate test rsa key
+      command: openssl genrsa -out /tmp/test_private.pem 4096
+
+    - name: convert test rsa key to PKCS#8
+      command: openssl pkcs8 -topk8 -in /tmp/test_private.pem -out /tmp/test_private.pk8 -nocrypt
+
+    - name: store test key
+      command: openstack secret store --secret-type private --name 'test private key' --file /tmp/test_private.pk8 -c 'Secret href' -f value
+      register: key_ref
+
+    - name: generate cert
+      command: openssl req -new -x509 -days 365 -key /tmp/test_private.pk8 -out /tmp/test_cert.pem -subj "/C=US/ST=TX/O=test/CN=test"
+
+    - name: store test cert
+      command: openstack secret store --secret-type certificate --name 'test cert' --file /tmp/test_cert.pem -c 'Secret href' -f value
+      register: cert_ref
+
+    - name: create container
+      command: openstack secret container create --type certificate --name 'test cert bundle' --secret "certificate={{ cert_ref.stdout }}" --secret "private_key={{ key_ref.stdout }}" -c 'Container href' -f value
+      register: container_ref
+
+    - name: clean up container
+      command: openstack secret container delete {{ container_ref.stdout }}
+
+    - name: clean up cert and key secrets
+      command: openstack secret delete {{ item }}
+      loop:
+        - cert_ref.stdout
+        - key_ref.stdout
+
+    - name: clean up cert and key files
+      file:
+        path: /tmp/{{ item }}
+        state: absent
+      loop:
+        - test_private.pem
+        - test_private.pk8
+        - test_cert.pem
