@@ -1,0 +1,66 @@
+---
+- hosts: all
+  remote_user: centos
+  environment:
+    OS_AUTH_URL: https://127.0.0.1:5000/v3/
+    OS_USERNAME: admin
+    OS_USER_DOMAIN_NAME: Default
+    OS_PASSWORD: a_big_secret
+    OS_PROJECT_NAME: openstack
+    OS_PROJECT_DOMAIN_NAME: Default
+  tasks:
+    # Exercise 01
+    - name: store test secret
+      command: openstack secret store --secret-type passphrase --name 'test' --payload 'Pa$$phrazE' -c 'Secret href' -f value
+      register: secret_ref
+
+    - name: cleanup test secret
+      command: openstack secret delete {{ secret_ref['stdout'] }}
+
+    # Exercise 02
+    - name: create test key file
+      shell: openssl rand 32 > /tmp/test_key
+
+    - name: store test key file
+      command: openstack secret store --secret-type 'symmetric' --name 'test key' --file /tmp/test_key -c 'Secret href' -f value
+      register: secret_ref
+
+    - name: clean up test key secret
+      command: openstack secret delete {{ secret_ref['stdout'] }}
+
+    - name: clean up test key
+      file:
+        path: /tmp/test_key
+        state: absent
+
+    # Exercise 03
+    - name: submit order
+      command: openstack secret order create key --name 'test order' --algorithm aes --bit-length 256 -c 'Order href' -f value
+      register: order_ref
+
+    - name: wait for oder to complete
+      wait_for: timeout=30
+      delegate_to: localhost
+
+    - name: ensure order is complete
+      command: openstack secret order get {{ order_ref['stdout'] }} -c 'Status' -f value
+      register: order_status
+      failed_when: "'ACTIVE' not in order_status.stdout"
+
+    - name: get ordered secret_ref
+      command: openstack secret order get {{ order_ref['stdout'] }} -c 'Secret href' -f value
+      register: secret_ref
+
+    - name: ensure ordered secret payload can be retrieved
+      command: openstack secret get --file /tmp/test_order_key --payload_content_type 'application/octet-stream' {{ secret_ref.stdout }}
+
+    - name: clean up ordered key
+      file:
+        path: /tmp/test_order_key
+        state: absent
+
+    - name: clean up test secret
+      command: openstack secret delete {{ secret_ref.stdout }}
+
+    - name: clean up test order
+      command: openstack order delete {{ order_ref.stdout }}
