@@ -38,6 +38,7 @@
       command: openstack secret order create key --name 'test order' --algorithm aes --bit-length 256 -c 'Order href' -f value
       register: order_ref
 
+    # TODO: Use a loop here instead of a dumb wait
     - name: wait for oder to complete
       wait_for: timeout=30
       delegate_to: localhost
@@ -73,29 +74,33 @@
         msg: "my_vm is not ACTIVE"
       when: "openstack_servers[0].status != 'ACTIVE'"
 
-# TODO: fix encrypted volume creation
-#    - name: create test volume type
-#      command: |
-#        openstack volume type create
-#        --encryption-provider nova.volume.encryptors.luks.LuksEncryptor
-#        --encryption-cipher aes-xts-plain64
-#        --encryption-key-size 256
-#        --encryption-control-location front-end TEST_LUKS
-#
-#    - name: create test clear volume
-#      command: openstack volume create --size 1 test_clear_volume
-#
-#    - name: create test encrypted volume
-#      command: openstack volume create --size 1 --type TEST_LUKS test_encrypted_volume
-#
-#    - name: clean up volumes
-#      command: openstack volume delete {{ item }}
-#      loop:
-#        - test_clear_volume
-#        - test_encrypted_volume
-#
-#    - name: clean up test volume type
-#      command: openstack volume type delete TEST_LUKS
+    - name: create test volume type
+      command: |
+        openstack volume type create
+        --encryption-provider nova.volume.encryptors.luks.LuksEncryptor
+        --encryption-cipher aes-xts-plain64
+        --encryption-key-size 256
+        --encryption-control-location front-end TEST_LUKS
+
+    - name: create test clear volume
+      command: openstack volume create --size 1 test_clear_volume
+
+    - name: create test encrypted volume
+      command: openstack volume create --size 1 --type TEST_LUKS test_encrypted_volume
+
+    - name: clean up volumes
+      command: openstack volume delete {{ item }}
+      loop:
+        - test_clear_volume
+        - test_encrypted_volume
+
+    - name: clean up test volume type
+      command: openstack volume type delete TEST_LUKS
+
+    - name: clean up cinder's order
+      command: openstack secret order list -c 'Order href' -f value
+      register: order_ref
+    - command: openstack secret order delete {{ order_ref.stdout }}
 
     # Exercise 05
     - name: generate test rsa key
@@ -125,8 +130,8 @@
     - name: clean up cert and key secrets
       command: openstack secret delete {{ item }}
       loop:
-        - cert_ref.stdout
-        - key_ref.stdout
+        - "{{ cert_ref.stdout }}"
+        - "{{ key_ref.stdout }}"
 
     - name: clean up cert and key files
       file:
@@ -136,3 +141,78 @@
         - test_private.pem
         - test_private.pk8
         - test_cert.pem
+
+    # Exercise 06
+    - name: generate test rsa key
+      command: openssl genrsa -out /tmp/test_private.pem 1024
+
+    - name: generate public key
+      command: openssl rsa -pubout -in /tmp/test_private.pem -out /tmp/test_public.pem
+
+    - name: generate test cert request
+      command: openssl req -new -key /tmp/test_private.pem -out /tmp/test_csr.csr -subj "/C=US/ST=TX/O=test/CN=test"
+
+    - name: generate test cert
+      command: openssl x509 -req -days 14 -in /tmp/test_csr.csr -signkey /tmp/test_private.pem -out /tmp/test_cert.crt
+
+    - name: store test cert
+      command: openstack secret store --name 'test cert' --secret-type certificate --file /tmp/test_cert.crt -c 'Secret href' -f value
+      register: cert_ref
+
+    - name: create fake images
+      copy:
+        dest: /tmp/signed_image
+        content: 'This is a trusted image'
+    - copy:
+        dest: /tmp/unsigned_image
+        content: 'This image is not trusted'
+
+    - name: sign the image
+      command: openssl dgst -sha256 -sign /tmp/test_private.pem -sigopt rsa_padding_mode:pss -out /tmp/testimage.signature /tmp/signed_image
+
+    - name: encode the signature
+      command: base64 -w 0 /tmp/testimage.signature
+      register: base64_sig
+
+    - name: upload signed image
+      command: |
+        glance image-create --name testSignedImage
+        --container-format bare
+        --disk-format qcow2
+        --property img_signature={{ base64_sig.stdout }}
+        --property img_signature_certificate_uuid={{ cert_ref.stdout.split('/')[-1] }}
+        --property img_signature_hash_method='SHA-256'
+        --property img_signature_key_type='RSA-PSS'
+        --file /tmp/signed_image
+
+    - name: ensure image upload fails for wrong signature
+      command: |
+        glance image-create --name testUnsignedImage
+        --container-format bare
+        --disk-format qcow2
+        --property img_signature={{ base64_sig.stdout }}
+        --property img_signature_certificate_uuid={{ cert_ref.stdout.split('/')[-1] }}
+        --property img_signature_hash_method='SHA-256'
+        --property img_signature_key_type='RSA-PSS'
+        --file /tmp/unsigned_image
+      register: command_result
+      failed_when: command_result.rc != 1
+
+    - name: clean up images
+      command: openstack image delete testSignedImage
+
+    - name: clean up files
+      file:
+        path: /tmp/{{ item }}
+        state: absent
+      loop:
+        - test_private.pem
+        - test_public.pem
+        - test_csr.csr
+        - test_cert.crt
+        - signed_image
+        - unsigned_image
+        - testimage.signature
+
+    - name: clean up secret
+      command: openstack secret delete {{ cert_ref.stdout }}

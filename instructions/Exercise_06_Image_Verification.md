@@ -43,10 +43,8 @@ First, create a key pair to be used for signing and store it in Barbican.  Enter
     subject=/CN=Exercise 6
     Getting Private key
     # CERT_REF=$(openstack secret store --name signing-cert \
-      --algorithm RSA --secret-type certificate \
-      --payload-content-type "application/octet-stream" \
-      --payload-content-encoding base64 \
-      --payload "$(base64 new_cert.crt)" -c "Secret href" -f value)
+      --secret-type certificate \
+      --file new_cert.crt -c "Secret href" -f value)
     # CERT_UUID=$(echo $CERT_REF | awk -F '/' '{print $NF}')
     # openstack secret list
     +------------------------------------------------------------------------+-----------------------------+---------------------------+--------+-------------------------------------------+-----------+------------+-------------+------+------------+
@@ -69,8 +67,7 @@ Next, create two images.  Normally, these would create software to boot.  Sign o
     # openssl dgst -sha256 -sign private_key.pem \
         -sigopt rsa_padding_mode:pss \
         -out myimage.signature signed_image
-    # base64 -w 0 myimage.signature > myimage.signature.b64
-    # image_signature=$(cat myimage.signature.b64)
+    # image_signature=$(base64 -w 0 myimage.signature)
 
 Next, upload the signed image.
 
