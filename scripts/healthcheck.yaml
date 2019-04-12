@@ -15,7 +15,7 @@
       register: secret_ref
 
     - name: cleanup test secret
-      command: openstack secret delete {{ secret_ref['stdout'] }}
+      command: openstack secret delete {{ secret_ref.stdout }}
 
     # Exercise 02
     - name: create test key file
@@ -26,7 +26,7 @@
       register: secret_ref
 
     - name: clean up test key secret
-      command: openstack secret delete {{ secret_ref['stdout'] }}
+      command: openstack secret delete {{ secret_ref.stdout }}
 
     - name: clean up test key
       file:
@@ -38,18 +38,15 @@
       command: openstack secret order create key --name 'test order' --algorithm aes --bit-length 256 -c 'Order href' -f value
       register: order_ref
 
-    # TODO: Use a loop here instead of a dumb wait
-    - name: wait for oder to complete
-      wait_for: timeout=30
-      delegate_to: localhost
-
-    - name: ensure order is complete
-      command: openstack secret order get {{ order_ref['stdout'] }} -c 'Status' -f value
+    - name: wait at most a minute for order to complete
+      command: openstack secret order get {{ order_ref.stdout }} -c Status -f value
       register: order_status
-      failed_when: "'ACTIVE' not in order_status.stdout"
+      until: "'ACTIVE' in order_status.stdout"
+      retries: 6
+      delay: 10
 
     - name: get ordered secret_ref
-      command: openstack secret order get {{ order_ref['stdout'] }} -c 'Secret href' -f value
+      command: openstack secret order get {{ order_ref.stdout }} -c 'Secret href' -f value
       register: secret_ref
 
     - name: ensure ordered secret payload can be retrieved
@@ -216,3 +213,73 @@
 
     - name: clean up secret
       command: openstack secret delete {{ cert_ref.stdout }}
+
+    # Exercise 7
+    - name: store db password
+      command: openstack secret store --secret-type passphrase --name "Test DB Password" --payload 'D4taba$ePassw0rd' -c "Secret href" -f value
+      register: db_ref
+
+    - name: store rabbit password
+      command: openstack secret store --secret-type passphrase --name "Test RabbitMQ Password" --payload 'Rabb1tMQPa$$worD' -c "Secret href" -f value
+      register: rabbit_ref
+
+    - name: create container
+      command: openstack secret container create --type generic --name 'test container' --secret "db={{ db_ref.stdout }}" --secret "rabbit={{ rabbit_ref.stdout }}" -c 'Container href' -f value
+      register: container_ref
+
+    - name: clean up container
+      command: openstack secret container delete {{ container_ref.stdout }}
+
+    - name: clean up secrets
+      command: openstack secret delete {{ item }}
+      loop:
+        - "{{ db_ref.stdout }}"
+        - "{{ rabbit_ref.stdout }}"
+
+    # Exercise 8
+    - name: order test rsa key
+      command: openstack secret order create asymmetric --algorithm rsa --bit-length 4096 -c "Order href" -f value
+      register: order_ref
+
+    - name: wait at most a minute for order to complete
+      command: openstack secret order get {{ order_ref.stdout }} -c Status -f value
+      register: result
+      until: "'ACTIVE' in result.stdout"
+      retries: 6
+      delay: 10
+
+    - name: get ordered container ref
+      command: openstack secret order get {{ order_ref.stdout }} -c 'Container href' -f value
+      register: container_ref
+
+    - name: get public ref
+      command: openstack secret container get {{ container_ref.stdout }} -c 'Public Key' -f value
+      register: public_ref
+
+    - name: retrieve public key
+      command: openstack secret get --file /tmp/public_key {{ public_ref.stdout }}
+
+    - name: get private ref
+      command: openstack secret container get {{ container_ref.stdout }} -c 'Private Key' -f value
+      register: private_ref
+
+    - name: retreive private key
+      command: openstack secret get --file /tmp/private_key {{ private_ref.stdout }}
+
+    - name: clean up files
+      file:
+        path: /tmp/{{ item }}
+        state: absent
+      loop:
+        - public_key
+        - private_key
+
+    - name: clean up secrets
+      command: openstack secret delete {{ item }}
+      loop:
+        - "{{ public_ref.stdout }}"
+        - "{{ private_ref.stdout }}"
+
+    - name: clean up container
+      command: openstack secret container delete {{ container_ref.stdout }}
+
