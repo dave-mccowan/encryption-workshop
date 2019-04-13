@@ -1,0 +1,285 @@
+---
+- hosts: all
+  remote_user: centos
+  environment:
+    OS_AUTH_URL: https://127.0.0.1:5000/v3/
+    OS_USERNAME: admin
+    OS_USER_DOMAIN_NAME: Default
+    OS_PASSWORD: a_big_secret
+    OS_PROJECT_NAME: openstack
+    OS_PROJECT_DOMAIN_NAME: Default
+  tasks:
+    # Exercise 01
+    - name: store test secret
+      command: openstack secret store --secret-type passphrase --name 'test' --payload 'Pa$$phrazE' -c 'Secret href' -f value
+      register: secret_ref
+
+    - name: cleanup test secret
+      command: openstack secret delete {{ secret_ref.stdout }}
+
+    # Exercise 02
+    - name: create test key file
+      shell: openssl rand 32 > /tmp/test_key
+
+    - name: store test key file
+      command: openstack secret store --secret-type 'symmetric' --name 'test key' --file /tmp/test_key -c 'Secret href' -f value
+      register: secret_ref
+
+    - name: clean up test key secret
+      command: openstack secret delete {{ secret_ref.stdout }}
+
+    - name: clean up test key
+      file:
+        path: /tmp/test_key
+        state: absent
+
+    # Exercise 03
+    - name: submit order
+      command: openstack secret order create key --name 'test order' --algorithm aes --bit-length 256 -c 'Order href' -f value
+      register: order_ref
+
+    - name: wait at most a minute for order to complete
+      command: openstack secret order get {{ order_ref.stdout }} -c Status -f value
+      register: order_status
+      until: "'ACTIVE' in order_status.stdout"
+      retries: 6
+      delay: 10
+
+    - name: get ordered secret_ref
+      command: openstack secret order get {{ order_ref.stdout }} -c 'Secret href' -f value
+      register: secret_ref
+
+    - name: ensure ordered secret payload can be retrieved
+      command: openstack secret get --file /tmp/test_order_key --payload_content_type 'application/octet-stream' {{ secret_ref.stdout }}
+
+    - name: clean up ordered key
+      file:
+        path: /tmp/test_order_key
+        state: absent
+
+    - name: clean up test secret
+      command: openstack secret delete {{ secret_ref.stdout }}
+
+    - name: clean up test order
+      command: openstack secret order delete {{ order_ref.stdout }}
+
+    # Exercise 04
+    - name: ensure my_vm is ACTIVE
+      os_server_facts:
+        server: my_vm
+    - fail:
+        msg: "my_vm is not ACTIVE"
+      when: "openstack_servers[0].status != 'ACTIVE'"
+
+    - name: create test volume type
+      command: |
+        openstack volume type create
+        --encryption-provider nova.volume.encryptors.luks.LuksEncryptor
+        --encryption-cipher aes-xts-plain64
+        --encryption-key-size 256
+        --encryption-control-location front-end TEST_LUKS
+
+    - name: create test clear volume
+      command: openstack volume create --size 1 test_clear_volume
+
+    - name: create test encrypted volume
+      command: openstack volume create --size 1 --type TEST_LUKS test_encrypted_volume
+
+    - name: clean up volumes
+      command: openstack volume delete {{ item }}
+      loop:
+        - test_clear_volume
+        - test_encrypted_volume
+
+    - name: clean up test volume type
+      command: openstack volume type delete TEST_LUKS
+
+    - name: clean up cinder's order
+      command: openstack secret order list -c 'Order href' -f value
+      register: order_ref
+    - command: openstack secret order delete {{ order_ref.stdout }}
+
+    # Exercise 05
+    - name: generate test rsa key
+      command: openssl genrsa -out /tmp/test_private.pem 4096
+
+    - name: convert test rsa key to PKCS#8
+      command: openssl pkcs8 -topk8 -in /tmp/test_private.pem -out /tmp/test_private.pk8 -nocrypt
+
+    - name: store test key
+      command: openstack secret store --secret-type private --name 'test private key' --file /tmp/test_private.pk8 -c 'Secret href' -f value
+      register: key_ref
+
+    - name: generate cert
+      command: openssl req -new -x509 -days 365 -key /tmp/test_private.pk8 -out /tmp/test_cert.pem -subj "/C=US/ST=TX/O=test/CN=test"
+
+    - name: store test cert
+      command: openstack secret store --secret-type certificate --name 'test cert' --file /tmp/test_cert.pem -c 'Secret href' -f value
+      register: cert_ref
+
+    - name: create container
+      command: openstack secret container create --type certificate --name 'test cert bundle' --secret "certificate={{ cert_ref.stdout }}" --secret "private_key={{ key_ref.stdout }}" -c 'Container href' -f value
+      register: container_ref
+
+    - name: clean up container
+      command: openstack secret container delete {{ container_ref.stdout }}
+
+    - name: clean up cert and key secrets
+      command: openstack secret delete {{ item }}
+      loop:
+        - "{{ cert_ref.stdout }}"
+        - "{{ key_ref.stdout }}"
+
+    - name: clean up cert and key files
+      file:
+        path: /tmp/{{ item }}
+        state: absent
+      loop:
+        - test_private.pem
+        - test_private.pk8
+        - test_cert.pem
+
+    # Exercise 06
+    - name: generate test rsa key
+      command: openssl genrsa -out /tmp/test_private.pem 1024
+
+    - name: generate public key
+      command: openssl rsa -pubout -in /tmp/test_private.pem -out /tmp/test_public.pem
+
+    - name: generate test cert request
+      command: openssl req -new -key /tmp/test_private.pem -out /tmp/test_csr.csr -subj "/C=US/ST=TX/O=test/CN=test"
+
+    - name: generate test cert
+      command: openssl x509 -req -days 14 -in /tmp/test_csr.csr -signkey /tmp/test_private.pem -out /tmp/test_cert.crt
+
+    - name: store test cert
+      command: openstack secret store --name 'test cert' --secret-type certificate --file /tmp/test_cert.crt -c 'Secret href' -f value
+      register: cert_ref
+
+    - name: create fake images
+      copy:
+        dest: /tmp/signed_image
+        content: 'This is a trusted image'
+    - copy:
+        dest: /tmp/unsigned_image
+        content: 'This image is not trusted'
+
+    - name: sign the image
+      command: openssl dgst -sha256 -sign /tmp/test_private.pem -sigopt rsa_padding_mode:pss -out /tmp/testimage.signature /tmp/signed_image
+
+    - name: encode the signature
+      command: base64 -w 0 /tmp/testimage.signature
+      register: base64_sig
+
+    - name: upload signed image
+      command: |
+        glance image-create --name testSignedImage
+        --container-format bare
+        --disk-format qcow2
+        --property img_signature={{ base64_sig.stdout }}
+        --property img_signature_certificate_uuid={{ cert_ref.stdout.split('/')[-1] }}
+        --property img_signature_hash_method='SHA-256'
+        --property img_signature_key_type='RSA-PSS'
+        --file /tmp/signed_image
+
+    - name: ensure image upload fails for wrong signature
+      command: |
+        glance image-create --name testUnsignedImage
+        --container-format bare
+        --disk-format qcow2
+        --property img_signature={{ base64_sig.stdout }}
+        --property img_signature_certificate_uuid={{ cert_ref.stdout.split('/')[-1] }}
+        --property img_signature_hash_method='SHA-256'
+        --property img_signature_key_type='RSA-PSS'
+        --file /tmp/unsigned_image
+      register: command_result
+      failed_when: command_result.rc != 1
+
+    - name: clean up images
+      command: openstack image delete testSignedImage
+
+    - name: clean up files
+      file:
+        path: /tmp/{{ item }}
+        state: absent
+      loop:
+        - test_private.pem
+        - test_public.pem
+        - test_csr.csr
+        - test_cert.crt
+        - signed_image
+        - unsigned_image
+        - testimage.signature
+
+    - name: clean up secret
+      command: openstack secret delete {{ cert_ref.stdout }}
+
+    # Exercise 7
+    - name: store db password
+      command: openstack secret store --secret-type passphrase --name "Test DB Password" --payload 'D4taba$ePassw0rd' -c "Secret href" -f value
+      register: db_ref
+
+    - name: store rabbit password
+      command: openstack secret store --secret-type passphrase --name "Test RabbitMQ Password" --payload 'Rabb1tMQPa$$worD' -c "Secret href" -f value
+      register: rabbit_ref
+
+    - name: create container
+      command: openstack secret container create --type generic --name 'test container' --secret "db={{ db_ref.stdout }}" --secret "rabbit={{ rabbit_ref.stdout }}" -c 'Container href' -f value
+      register: container_ref
+
+    - name: clean up container
+      command: openstack secret container delete {{ container_ref.stdout }}
+
+    - name: clean up secrets
+      command: openstack secret delete {{ item }}
+      loop:
+        - "{{ db_ref.stdout }}"
+        - "{{ rabbit_ref.stdout }}"
+
+    # Exercise 8
+    - name: order test rsa key
+      command: openstack secret order create asymmetric --algorithm rsa --bit-length 4096 -c "Order href" -f value
+      register: order_ref
+
+    - name: wait at most a minute for order to complete
+      command: openstack secret order get {{ order_ref.stdout }} -c Status -f value
+      register: result
+      until: "'ACTIVE' in result.stdout"
+      retries: 6
+      delay: 10
+
+    - name: get ordered container ref
+      command: openstack secret order get {{ order_ref.stdout }} -c 'Container href' -f value
+      register: container_ref
+
+    - name: get public ref
+      command: openstack secret container get {{ container_ref.stdout }} -c 'Public Key' -f value
+      register: public_ref
+
+    - name: retrieve public key
+      command: openstack secret get --file /tmp/public_key {{ public_ref.stdout }}
+
+    - name: get private ref
+      command: openstack secret container get {{ container_ref.stdout }} -c 'Private Key' -f value
+      register: private_ref
+
+    - name: retreive private key
+      command: openstack secret get --file /tmp/private_key {{ private_ref.stdout }}
+
+    - name: clean up files
+      file:
+        path: /tmp/{{ item }}
+        state: absent
+      loop:
+        - public_key
+        - private_key
+
+    - name: clean up secrets
+      command: openstack secret delete {{ item }}
+      loop:
+        - "{{ public_ref.stdout }}"
+        - "{{ private_ref.stdout }}"
+
+    - name: clean up container
+      command: openstack secret container delete {{ container_ref.stdout }}
+
