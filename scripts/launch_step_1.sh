@@ -16,7 +16,7 @@ wget https://trunk.rdoproject.org/centos7/puppet-passed-ci/delorean.repo -O /etc
 wget https://trunk.rdoproject.org/centos7/delorean-deps.repo -O /etc/yum.repos.d/delorean-deps.repo
 
 # install software
-wget https://raw.githubusercontent.com/dave-mccowan/encryption-workshop/master/scripts/package.list
+wget https://raw.githubusercontent.com/vakwetu/encryption-workshop/denver_2019/scripts/package.list
 yum install -y $(cat package.list)
 
 # setup puppet-openstack
@@ -27,9 +27,7 @@ git clone https://github.com/openstack/puppet-openstack-integration.git /etc/pup
 
 # get script files
 cd ~
-wget https://vakwetu.fedorapeople.org/summit_demo_prep/convert_to_dogtag_with_hsm.sh
-wget https://vakwetu.fedorapeople.org/summit_demo_prep/convert_to_local_dogtag.sh
-wget https://raw.githubusercontent.com/dave-mccowan/encryption-workshop/master/scripts/launch_step_2.sh
+wget https://raw.githubusercontent.com/vakwetu/encryption-workshop/denver_2019/scripts/launch_step_2.sh
 
 # chmod +x
 chmod +x *.sh
