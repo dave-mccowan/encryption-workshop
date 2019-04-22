@@ -283,3 +283,5 @@
     - name: clean up container
       command: openstack secret container delete {{ container_ref.stdout }}
 
+    - name: clean up second test order
+      command: openstack secret order delete {{ order_ref.stdout }}
