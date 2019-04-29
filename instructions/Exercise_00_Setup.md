@@ -2,31 +2,31 @@
 Copy this ssh key file and save it in a file called `barbican_workshop.pem`:
 
     -----BEGIN RSA PRIVATE KEY-----
-    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
+    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
     -----END RSA PRIVATE KEY-----
 
 Change the file permissions to read/write for your user only:
