@@ -1,0 +1,6 @@
+export OS_AUTH_URL=https://127.0.0.1:5000/v3/
+export OS_USERNAME=admin
+export OS_USER_DOMAIN_NAME=Default
+export OS_PASSWORD=a_big_secret
+export OS_PROJECT_NAME=openstack
+export OS_PROJECT_DOMAIN_NAME=Default
