@@ -12,8 +12,9 @@ setenforce 0
 
 # repos to be added
 yum install -y wget
-wget https://trunk.rdoproject.org/centos7/puppet-passed-ci/delorean.repo -O /etc/yum.repos.d/delorean.repo
-wget https://trunk.rdoproject.org/centos7/delorean-deps.repo -O /etc/yum.repos.d/delorean-deps.repo
+#wget https://trunk.rdoproject.org/centos7/puppet-passed-ci/delorean.repo -O /etc/yum.repos.d/delorean.repo
+#wget https://trunk.rdoproject.org/centos7/delorean-deps.repo -O /etc/yum.repos.d/delorean-deps.repo
+yum install -y centos-release-openstack-train
 
 # install software
 wget https://raw.githubusercontent.com/dave-mccowan/encryption-workshop/master/scripts/package.list
